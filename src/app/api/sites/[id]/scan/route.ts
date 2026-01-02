@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { createClient } from '@/lib/supabase/server';
 import { crawlSite } from '@/lib/crawler';
 
 export async function POST(
@@ -8,12 +8,16 @@ export async function POST(
 ) {
     try {
         const { id } = await params;
+        const supabase = await createClient();
 
-        const site = await prisma.site.findUnique({
-            where: { id },
-        });
+        // Check if site exists
+        const { data: site, error } = await supabase
+            .from('sites')
+            .select('id, url')
+            .eq('id', id)
+            .single();
 
-        if (!site) {
+        if (error || !site) {
             return NextResponse.json({ error: 'Site not found' }, { status: 404 });
         }
 
