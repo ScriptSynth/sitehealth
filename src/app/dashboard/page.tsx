@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server';
 import { Plus, AlertCircle, CheckCircle2, Clock, Globe } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
     const supabase = await createClient();
 
@@ -139,12 +141,12 @@ export default async function DashboardPage() {
                                             <td className="px-6 py-4 font-medium group-hover:text-white transition-colors">{site.url}</td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${status === "Healthy" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" :
-                                                        status === "Issues Found" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
-                                                            "bg-blue-500/10 text-blue-400 border border-blue-500/20"
+                                                    status === "Issues Found" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
+                                                        "bg-blue-500/10 text-blue-400 border border-blue-500/20"
                                                     }`}>
                                                     <span className={`w-1.5 h-1.5 rounded-full ${status === "Healthy" ? "bg-emerald-400" :
-                                                            status === "Issues Found" ? "bg-red-400" :
-                                                                "bg-blue-400 animate-pulse"
+                                                        status === "Issues Found" ? "bg-red-400" :
+                                                            "bg-blue-400 animate-pulse"
                                                         }`} />
                                                     {status}
                                                 </span>

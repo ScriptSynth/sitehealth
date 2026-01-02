@@ -3,6 +3,8 @@ import { ArrowLeft, Download, AlertCircle, ExternalLink, RefreshCw, CheckCircle2
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default async function SiteDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const supabase = await createClient();
@@ -165,50 +167,66 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                                     <th className="px-6 py-4">Issue Type</th>
                                     <th className="px-6 py-4">Broken Resource</th>
                                     <th className="px-6 py-4">Found On Page</th>
-                                    <th className="px-6 py-4">Detected</th>
+                                    <th className="px-6 py-4">Fix Recommendation</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {issues.map((issue: any) => (
-                                    <tr key={issue.id} className="hover:bg-white/5 transition-colors group">
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-                                                {issue.status_code || 'ERR'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${issue.type === "BROKEN_LINK" ? "bg-red-500/10 text-red-400" :
-                                                    issue.type === "BROKEN_IMAGE" ? "bg-orange-500/10 text-orange-400" :
-                                                        "bg-yellow-500/10 text-yellow-400"
-                                                }`}>
-                                                {issue.type.replace(/_/g, " ")}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2 max-w-xs">
-                                                <code className="text-xs bg-black/30 px-2 py-1 rounded text-red-300 truncate w-full block" title={issue.url}>
-                                                    {issue.url}
-                                                </code>
-                                                <a href={issue.url} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
-                                                    <ExternalLink className="w-3 h-3" />
+                                {issues.map((issue: any) => {
+                                    // Generate automated fix suggestion based on error
+                                    let fixSuggestion = "Investigate the broken resource.";
+                                    const code = issue.status_code;
+
+                                    if (code === 404) fixSuggestion = "The file was deleted or moved. Update the link or restore the file.";
+                                    else if (code === 500) fixSuggestion = "Server error. Check the server logs for the linked resource.";
+                                    else if (code === 403) fixSuggestion = "Permission denied. Check file permissions or access control.";
+                                    else if (code === 0) fixSuggestion = "Connection refused. The server might be down or DNS failed.";
+
+                                    if (issue.type === "BROKEN_IMAGE") fixSuggestion += " Replace the image.";
+
+                                    return (
+                                        <tr key={issue.id} className="hover:bg-white/5 transition-colors group">
+                                            <td className="px-6 py-4">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-medium bg-red-500/10 text-red-400 border border-red-500/20">
+                                                    {issue.status_code || 'ERR'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${issue.type === "BROKEN_LINK" ? "bg-red-500/10 text-red-400" :
+                                                        issue.type === "BROKEN_IMAGE" ? "bg-orange-500/10 text-orange-400" :
+                                                            "bg-yellow-500/10 text-yellow-400"
+                                                    }`}>
+                                                    {issue.type.replace(/_/g, " ")}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center gap-2 max-w-xs">
+                                                    <code className="text-xs bg-black/30 px-2 py-1 rounded text-red-300 truncate w-full block" title={issue.url}>
+                                                        {issue.url}
+                                                    </code>
+                                                    <a href={issue.url} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-white transition-colors">
+                                                        <ExternalLink className="w-3 h-3" />
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <a
+                                                    href={`https://${site.url.replace(/^https?:\/\//, '')}${issue.page_url}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 max-w-[200px] truncate"
+                                                >
+                                                    {issue.page_url || '/'}
                                                 </a>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <a
-                                                href={`https://${site.url.replace(/^https?:\/\//, '')}${issue.page_url}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-indigo-400 hover:text-indigo-300 hover:underline flex items-center gap-1 max-w-[200px] truncate"
-                                            >
-                                                {issue.page_url || '/'}
-                                            </a>
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-400 text-xs">
-                                            {new Date(issue.detected_at).toLocaleDateString()}
-                                        </td>
-                                    </tr>
-                                ))}
+                                            </td>
+                                            <td className="px-6 py-4 text-slate-300 text-sm">
+                                                <div className="flex items-start gap-2 max-w-xs">
+                                                    <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-indigo-400 flex-shrink-0"></div>
+                                                    <span>{fixSuggestion}</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
