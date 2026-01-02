@@ -30,7 +30,11 @@ export default function LoginPage() {
             router.push('/dashboard');
             router.refresh();
         } catch (err: any) {
-            setError(err.message || 'Failed to sign in');
+            if (err.message.includes('Invalid login credentials')) {
+                setError('Invalid email or password. Please try again.');
+            } else {
+                setError(err.message || 'Failed to sign in');
+            }
         } finally {
             setLoading(false);
         }

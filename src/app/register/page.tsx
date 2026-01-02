@@ -10,6 +10,7 @@ export default function RegisterPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
@@ -27,22 +28,39 @@ export default function RegisterPage() {
 
             if (error) throw error;
 
-            // Auto sign in after signup
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
+            // If email confirmation is enabled, we shouldn't try to sign in immediately
+            // unless we know for sure it's disabled. Safest UX is to tell them to check email.
+            setSuccess(true);
+            // Optional: Redirect after a delay
+            // setTimeout(() => router.push('/login'), 5000);
 
-            if (signInError) throw signInError;
-
-            router.push('/dashboard');
-            router.refresh();
         } catch (err: any) {
             setError(err.message || 'Failed to create account');
-        } finally {
             setLoading(false);
         }
     };
+
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-mesh-gradient px-4 relative overflow-hidden">
+                <div className="w-full max-w-md glass-card p-8 rounded-2xl relative z-10 card-3d animate-slide-up text-center">
+                    <div className="flex justify-center mb-6">
+                        <div className="p-3 rounded-full bg-green-500/20 text-green-400">
+                            <Activity className="w-8 h-8" />
+                        </div>
+                    </div>
+                    <h2 className="text-2xl font-bold mb-4">Check your email</h2>
+                    <p className="text-slate-400 mb-8">
+                        We've sent a confirmation link to <span className="text-white font-medium">{email}</span>.
+                        Please click the link to verify your account and sign in.
+                    </p>
+                    <Link href="/login" className="btn-primary w-full py-3 rounded-lg block font-semibold text-white">
+                        Go to Login
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-mesh-gradient px-4 relative overflow-hidden">

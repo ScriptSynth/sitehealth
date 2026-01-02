@@ -111,7 +111,7 @@ export default function Home() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="glass-card p-8 rounded-2xl card-3d group animate-slide-up relative overflow-hidden"
+                  className="glass-card p-8 rounded-2xl card-3d card-3d-hover group animate-slide-up relative overflow-hidden"
                   style={{ animationDelay: `${0.1 * i}s` }}
                 >
                   {/* Gradient overlay */}
