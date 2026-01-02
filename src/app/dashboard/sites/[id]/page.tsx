@@ -85,16 +85,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                     </div>
                 </div>
                 <div className="flex gap-3">
-                    <form action={`/api/sites/${id}/scan`} method="POST">
-                        <button
-                            type="submit"
-                            disabled={isScanning}
-                            className="px-4 py-2 glass-button rounded-lg text-sm font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <RefreshCw className={`w-4 h-4 ${isScanning ? 'animate-spin' : ''}`} />
-                            {isScanning ? 'Scanning...' : 'Scan Now'}
-                        </button>
-                    </form>
+                    <ScanButton siteId={id} initialIsScanning={isScanning} />
                     <a
                         href={`/api/sites/${id}/export`}
                         download
@@ -192,8 +183,8 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ id:
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${issue.type === "BROKEN_LINK" ? "bg-red-500/10 text-red-400" :
-                                                        issue.type === "BROKEN_IMAGE" ? "bg-orange-500/10 text-orange-400" :
-                                                            "bg-yellow-500/10 text-yellow-400"
+                                                    issue.type === "BROKEN_IMAGE" ? "bg-orange-500/10 text-orange-400" :
+                                                        "bg-yellow-500/10 text-yellow-400"
                                                     }`}>
                                                     {issue.type.replace(/_/g, " ")}
                                                 </span>
