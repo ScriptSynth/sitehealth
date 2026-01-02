@@ -1,5 +1,5 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',
     // Standard Next.js config
 };
 
