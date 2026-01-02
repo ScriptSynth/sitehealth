@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SiteHealth - Website Monitoring SaaS
 
-## Getting Started
+A modern SaaS application that monitors websites for broken links, missing images, and asset failures.
 
-First, run the development server:
+## 🚀 Features
+
+- ✅ **Real-time Website Monitoring** - Crawls websites up to depth 3
+- ✅ **Broken Link Detection** - Finds 404s and broken internal links
+- ✅ **Image & Asset Checking** - Detects missing images and files
+- ✅ **Automated Daily Scans** - GitHub Actions runs scans every 24 hours
+- ✅ **Beautiful Dashboard** - Modern UI with 3D animations and glassmorphism
+- ✅ **Supabase Authentication** - Secure user authentication
+- ✅ **CSV Export** - Download scan results
+
+## 📋 Prerequisites
+
+Before you begin, make sure you have:
+
+1. **Node.js 18+** installed
+2. **Supabase account** - [Sign up here](https://supabase.com)
+3. **GitHub account** - For automated scans
+
+## 🛠️ Setup Instructions
+
+### Step 1: Install Dependencies
+
+```bash
+npm install
+```
+
+### Step 2: Configure Environment Variables
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://zudsddfvubmxuccmwvhk.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_oaXpaNpHPwqDjDHfDUax7A_-AvZIH4p
+CRON_SECRET=your_random_secret_here
+```
+
+### Step 3: Set Up Supabase Database
+
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
+2. Go to **SQL Editor**
+3. Run the SQL from the artifacts folder
+4. This creates `sites`, `scans`, and `issues` tables
+
+### Step 4: Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🤖 Automated Scans Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+See `github_actions_setup.md` in the artifacts folder for complete instructions.
 
-## Learn More
+## 🔧 Troubleshooting
 
-To learn more about Next.js, take a look at the following resources:
+### "Add Site" button not working
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Check browser console (F12)
+2. Verify Supabase tables are created
+3. Make sure you're logged in
+4. Check that RLS policies are enabled
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎨 Tech Stack
 
-## Deploy on Vercel
+- Next.js 16 + Tailwind CSS v4
+- Supabase (PostgreSQL + Auth)
+- Playwright (Web Crawler)
+- GitHub Actions (Automation)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📝 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

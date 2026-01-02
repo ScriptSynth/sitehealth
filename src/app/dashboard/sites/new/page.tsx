@@ -18,25 +18,39 @@ export default function AddSitePage() {
 
         try {
             // Validate URL
-            const urlObj = new URL(url);
+            let validUrl: string;
+            try {
+                const urlObj = new URL(url);
+                validUrl = urlObj.toString();
+            } catch {
+                throw new Error('Please enter a valid URL (e.g., https://example.com)');
+            }
+
+            console.log('Submitting URL:', validUrl);
 
             const response = await fetch('/api/sites', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: urlObj.toString() }),
+                body: JSON.stringify({ url: validUrl }),
             });
 
             const data = await response.json();
+            console.log('API Response:', response.status, data);
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to add site');
+                if (response.status === 401) {
+                    throw new Error('You must be logged in to add a site');
+                }
+                throw new Error(data.error || `Server error: ${response.status}`);
             }
 
-            // Redirect to dashboard
+            // Success! Redirect to dashboard
+            console.log('Site added successfully:', data.site);
             router.push('/dashboard');
             router.refresh();
         } catch (err: any) {
-            setError(err.message || 'Invalid URL or failed to add site');
+            console.error('Error adding site:', err);
+            setError(err.message || 'Failed to add site. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -52,7 +66,7 @@ export default function AddSitePage() {
             <div className="glass-card p-8 rounded-2xl animate-slide-up" style={{ animationDelay: '0.1s' }}>
                 {error && (
                     <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-                        {error}
+                        <strong>Error:</strong> {error}
                     </div>
                 )}
 
@@ -62,7 +76,7 @@ export default function AddSitePage() {
                             Website URL
                         </label>
                         <input
-                            type="url"
+                            type="text"
                             id="url"
                             value={url}
                             onChange={(e) => setUrl(e.target.value)}
@@ -90,7 +104,7 @@ export default function AddSitePage() {
                             {loading ? (
                                 <>
                                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    Scanning...
+                                    Adding Site...
                                 </>
                             ) : (
                                 <>
