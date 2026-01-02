@@ -1,7 +1,8 @@
 import { ArrowLeft, Download, AlertCircle, ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
-export default function SiteDetailPage({ params }: { params: { id: string } }) {
+export default async function SiteDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     // In real app, fetch site data and issues by ID
     const siteUrl = "myshop.com";
     const issues = [
@@ -68,8 +69,8 @@ export default function SiteDetailPage({ params }: { params: { id: string } }) {
                                 <tr key={issue.id} className="hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${issue.type === "BROKEN_LINK" ? "bg-orange-500/10 text-orange-400" :
-                                                issue.type === "BROKEN_IMAGE" ? "bg-red-500/10 text-red-400" :
-                                                    "bg-yellow-500/10 text-yellow-400"
+                                            issue.type === "BROKEN_IMAGE" ? "bg-red-500/10 text-red-400" :
+                                                "bg-yellow-500/10 text-yellow-400"
                                             }`}>
                                             {issue.type.replace(/_/g, " ")}
                                         </span>

@@ -4,10 +4,10 @@ import { crawlSite } from '@/lib/crawler';
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         const site = await prisma.site.findUnique({
             where: { id },
